@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename);
 
 // ---------- Express App ----------
 const app = express();
-app.use(cors({ origin: "https://kenyagazettescanner.vercel.app/", methods: ["GET", "POST"] }));
+app.use(cors({ origin: "https://kenyagazettescanner.vercel.app", methods: ["GET", "POST"] }));
 app.use(express.json());
 
 // ---------- Database Setup ----------
