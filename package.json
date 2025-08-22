@@ -5,26 +5,31 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch index.js index.js",
+    "start": "node index.js",
     "postinstall": "npm rebuild better-sqlite3 --build-from-source"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "better-sqlite3": "^12.2.0",
     "canvas": "^3.1.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "fastest-levenshtein": "^1.0.16",
     "fs-extra": "^11.3.1",
-    "fuzzball": "^2.2.2",
+    "fuzzball": "^2.2.3",
     "multer": "^2.0.2",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^5.4.54",
+    "pdfkit": "^0.17.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
+    "tesseract.js": "^6.0.1",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
