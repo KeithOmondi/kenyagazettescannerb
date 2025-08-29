@@ -1,4 +1,6 @@
-// Normalization & tokenization
+// utils/normalize.js
+
+// Base normalizer
 export const normalizeName = (name = "") =>
   String(name)
     .toLowerCase()
@@ -8,27 +10,27 @@ export const normalizeName = (name = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
-// Canonical normalization that strips titles, estate phrases, and trailing locations
+// Strip titles / estate phrases / trailing "of <place>"
 export const normalizeCanonical = (name = "") => {
   let s = normalizeName(name);
-  // remove common titles and fillers
   s = s.replace(/\b(dr|mr|mrs|ms|miss|rev|prof|eng)\b/g, " ");
-  s = s.replace(
-    /\b(the\s+late|late|estate\s+of|of\s+the\s+estate\s+of)\b/g,
-    " "
-  );
-  // drop trailing "of <place>" patterns
+  s = s.replace(/\b(the\s+late|late|estate\s+of|of\s+the\s+estate\s+of)\b/g, " ");
   s = s.replace(/\bof\s+[a-z][a-z\s-]*$/g, " ");
   return s.replace(/\s+/g, " ").trim();
 };
 
+// Canonical tokens in alpha order (deterministic)
 export const tokenizeName = (name = "") =>
   normalizeCanonical(name).split(" ").filter(Boolean).sort().join(" ");
 
+// DB key — same as canonical tokens (stable match key)
+export const normalizeNameDB = (name = "") => tokenizeName(name);
+
+// For set operations
 export const tokensAsSet = (name = "") =>
   new Set(tokenizeName(name).split(" ").filter(Boolean));
 
-// Flexible header normalization for Excel keys
+// Flexible header normalization for Excel-like columns
 const normKey = (k = "") =>
   String(k)
     .toLowerCase()
@@ -37,7 +39,7 @@ const normKey = (k = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
-// Try best column for name in varying schemas
+// Try to find the "deceased name" column in arbitrary Excel headers
 export function bestExcelNameKey(row) {
   if (!row || typeof row !== "object") return "";
   const map = {};
@@ -62,10 +64,11 @@ export function bestExcelNameKey(row) {
   return "";
 }
 
-// Jaccard similarity for token sets
-export function jaccard(tokensA, tokensB) {
+// Proper Jaccard similarity
+export function jaccard(tokensA = [], tokensB = []) {
   const setA = new Set(tokensA.filter(Boolean));
   const setB = new Set(tokensB.filter(Boolean));
   const inter = [...setA].filter((x) => setB.has(x)).length;
   const union = new Set([...setA, ...setB]).size || 1;
+  return inter / union;
 }
